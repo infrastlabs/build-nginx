@@ -9,17 +9,14 @@ ARG OPENSSL_CHECKSUM="9384a2b0570dd80358841464677115df785edb941c71211f75076d72fe
 ARG ZLIB_VERSION="1.2.12"
 ARG ZLIB_CHECKSUM="91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9"
 
-ADD https://nginx.org/download/nginx-$VERSION.tar.gz /tmp/nginx.tar.gz
-ADD https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz /tmp/openssl.tar.gz
-ADD https://zlib.net/zlib-$ZLIB_VERSION.tar.gz /tmp/zlib.tar.gz
-
-RUN [ "$(sha256sum /tmp/nginx.tar.gz | awk '{print $1}')" = "$CHECKSUM" ] && \
-    [ "$(sha256sum /tmp/openssl.tar.gz | awk '{print $1}')" = "$OPENSSL_CHECKSUM" ] && \
-    [ "$(sha256sum /tmp/zlib.tar.gz | awk '{print $1}')" = "$ZLIB_CHECKSUM" ] && \
-    apk add build-base ca-certificates gcc linux-headers pcre-dev perl && \
-    tar -C /tmp -xf /tmp/nginx.tar.gz && \
-    tar -C /tmp -xf /tmp/openssl.tar.gz && \
-    tar -C /tmp -xf /tmp/zlib.tar.gz && \
+# ADD https://nginx.org/download/nginx-$VERSION.tar.gz /tmp/nginx.tar.gz
+# ADD https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz /tmp/openssl.tar.gz
+# ADD https://zlib.net/zlib-$ZLIB_VERSION.tar.gz /tmp/zlib.tar.gz
+ADD ./data/* /data/
+RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl && \
+    tar -C /tmp -xf /data/nginx.tar.gz && \
+    tar -C /tmp -xf /data/openssl.tar.gz && \
+    tar -C /tmp -xf /data/zlib.tar.gz && \
     cd /tmp/nginx-$VERSION && \
       ./configure \
         --with-cc-opt="-static" \
