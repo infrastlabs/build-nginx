@@ -1,7 +1,9 @@
 # FROM alpine:3 AS build #alpine镜像make报Operation not permitted https://blog.csdn.net/u014595589/article/details/118693759
 FROM alpine:3.13 AS build
 
-ARG VERSION="1.23.0"
+# ARG VERSION="1.23.0"
+# mainline > stableVer
+ARG VERSION="1.22.0"
 ARG CHECKSUM="820acaa35b9272be9e9e72f6defa4a5f2921824709f8aa4772c78ab31ed94cd1"
 
 ARG OPENSSL_VERSION="1.1.1o"
