@@ -1,6 +1,9 @@
-FROM alpine:3 AS build
+# FROM alpine:3 AS build #alpine镜像make报Operation not permitted https://blog.csdn.net/u014595589/article/details/118693759
+FROM alpine:3.13 AS build
 
-ARG VERSION="1.23.0"
+# ARG VERSION="1.23.0"
+# mainline > stableVer
+ARG VERSION="1.22.0"
 ARG CHECKSUM="820acaa35b9272be9e9e72f6defa4a5f2921824709f8aa4772c78ab31ed94cd1"
 
 ARG OPENSSL_VERSION="1.1.1o"
@@ -9,29 +12,46 @@ ARG OPENSSL_CHECKSUM="9384a2b0570dd80358841464677115df785edb941c71211f75076d72fe
 ARG ZLIB_VERSION="1.2.12"
 ARG ZLIB_CHECKSUM="91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9"
 
+# aliyun.com
+RUN domain="mirrors.ustc.edu.cn"; \
+echo "http://$domain/alpine/v3.13/main" > /etc/apk/repositories; \
+echo "http://$domain/alpine/v3.13/community" >> /etc/apk/repositories
+RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl 
+
 # ADD https://nginx.org/download/nginx-$VERSION.tar.gz /tmp/nginx.tar.gz
 # ADD https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz /tmp/openssl.tar.gz
 # ADD https://zlib.net/zlib-$ZLIB_VERSION.tar.gz /tmp/zlib.tar.gz
-ADD ./data/* /data/
-RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl && \
+# ADD: 会解压tar.gz
+COPY ./data/* /data/
+RUN ls -l /data/*; \
     tar -C /tmp -xf /data/nginx.tar.gz && \
     tar -C /tmp -xf /data/openssl.tar.gz && \
     tar -C /tmp -xf /data/zlib.tar.gz && \
     cd /tmp/nginx-$VERSION && \
+      # https://blog.51cto.com/65147718/1858474?utm_source=debugrun
+      # #CFLAGS=”$CFLAGS -g” (注释掉这行,去掉 debug 模式编译,编译以后程序只有几百 k)
+      # cat auto/cc/gcc |grep CFLAGS; \
+      # sbin/nginx: 13M  > 5.9M
+      sed -i "s^CFLAGS\=\"\$CFLAGS\ \-g\"^#CFLAGS=\"\$CFLAGS \-g\"^g" auto/cc/gcc; \
       ./configure \
         --with-cc-opt="-static" \
         --with-ld-opt="-static" \
         --with-cpu-opt="generic" \
-        --sbin-path="/bin/nginx" \
-        --conf-path="/etc/nginx/nginx.conf" \
-        --pid-path="/tmp/nginx.pid" \
-        --http-log-path="/dev/stdout" \
-        --error-log-path="/dev/stderr" \
-        --http-client-body-temp-path="/tmp/client_temp" \
-        --http-fastcgi-temp-path="/tmp/fastcgi_temp" \
-        --http-proxy-temp-path="/tmp/proxy_temp" \
-        --http-scgi-temp-path="/tmp/scgi_temp" \
-        --http-uwsgi-temp-path="/tmp/uwsgi_temp" \
+        \
+        # /opt/svr/xxxx-sys/nginx/sbin/nginx
+        --prefix=../../nginx \
+        # --sbin-path="/bin/nginx" \
+        # --conf-path="/etc/nginx/nginx.conf" \
+        # --pid-path="/tmp/nginx.pid" \
+        # --http-log-path="/dev/stdout" \
+        # --error-log-path="/dev/stderr" \
+        \
+        --http-client-body-temp-path="./temp/client_temp" \
+        --http-fastcgi-temp-path="./temp/fastcgi_temp" \
+        --http-proxy-temp-path="./temp/proxy_temp" \
+        --http-scgi-temp-path="./temp/scgi_temp" \
+        --http-uwsgi-temp-path="./temp/uwsgi_temp" \
+        \
         # http://www.ttlsa.com/nginx/nginx-configure-descriptions/
         # https://blog.csdn.net/netlai/article/details/80016712
         # 启用select模块支持（一种轮询模式,不推荐在高载环境下使用）禁用：--without-select_module
@@ -96,23 +116,37 @@ RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl && \
         --with-compat \
         --with-openssl="/tmp/openssl-$OPENSSL_VERSION" \
         --with-zlib="/tmp/zlib-$ZLIB_VERSION" && \
+      # find objs && sleep 10; \
+      # https://www.cainiao.io/archives/697
+      # CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g
+      # CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -static
+      # cat objs/Makefile |grep "Wno-unused-parameter"; sleep 10; \
       make
 
-RUN mkdir -p /rootfs/bin && \
-      cp /tmp/nginx-$VERSION/objs/nginx /rootfs/bin/ && \
-    mkdir -p /rootfs/etc && \
-      echo "nogroup:*:10000:nobody" > /rootfs/etc/group && \
-      echo "nobody:*:10000:10000:::" > /rootfs/etc/passwd && \
-    mkdir -p /rootfs/etc/nginx && \
-    mkdir -p /rootfs/etc/ssl/certs && \
-      cp /etc/ssl/certs/ca-certificates.crt /rootfs/etc/ssl/certs/ && \
-    mkdir -p /rootfs/tmp
+# RUN mkdir -p /rootfs/bin && \
+#       cp /tmp/nginx-$VERSION/objs/nginx /rootfs/bin/ && \
+#     mkdir -p /rootfs/etc && \
+#       echo "nogroup:*:10000:nobody" > /rootfs/etc/group && \
+#       echo "nobody:*:10000:10000:::" > /rootfs/etc/passwd && \
+#     mkdir -p /rootfs/etc/nginx && \
+#     mkdir -p /rootfs/etc/ssl/certs && \
+#       cp /etc/ssl/certs/ca-certificates.crt /rootfs/etc/ssl/certs/ && \
+#     mkdir -p /rootfs/tmp
+COPY ./rootfs /rootfs
+# ADD ./rootfs/nginx/conf/conf.tar.gz /rootfs/nginx/conf/
+# TODO drop: ./temp/client_temp/.gitkeep
+RUN \
+  find /rootfs  -name ".gitkeep" -exec rm -rf {} \;; \
+  find /rootfs; \
+  cp /tmp/nginx-$VERSION/objs/nginx /rootfs/nginx/sbin/
 
 
-FROM scratch
+# FROM scratch
+FROM infrastlabs/alpine-ext:weak
 
-COPY --from=build --chown=10000:10000 /rootfs /
-
-USER 10000:10000
-ENTRYPOINT ["/bin/nginx"]
-CMD ["-g", "daemon off;"]
+COPY --from=build --chown=10000:10000 /rootfs /rootfs
+WORKDIR /rootfs/nginx
+# USER 10000:10000
+# ENTRYPOINT ["bash"]
+# CMD ["-g", "daemon off;"]
+CMD ["/rootfs/nginx/start.sh"]
