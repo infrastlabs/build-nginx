@@ -26,6 +26,11 @@ RUN ls -l /data/*; \
     tar -C /tmp -xf /data/openssl.tar.gz && \
     tar -C /tmp -xf /data/zlib.tar.gz && \
     cd /tmp/nginx-$VERSION && \
+      # https://blog.51cto.com/65147718/1858474?utm_source=debugrun
+      # #CFLAGS=”$CFLAGS -g” (注释掉这行,去掉 debug 模式编译,编译以后程序只有几百 k)
+      # cat auto/cc/gcc |grep CFLAGS; \
+      # sbin/nginx: 13M  > 5.9M
+      sed -i "s^CFLAGS\=\"\$CFLAGS\ \-g\"^#CFLAGS=\"\$CFLAGS \-g\"^g" auto/cc/gcc; \
       ./configure \
         --with-cc-opt="-static" \
         --with-ld-opt="-static" \
@@ -109,6 +114,11 @@ RUN ls -l /data/*; \
         --with-compat \
         --with-openssl="/tmp/openssl-$OPENSSL_VERSION" \
         --with-zlib="/tmp/zlib-$ZLIB_VERSION" && \
+      # find objs && sleep 10; \
+      # https://www.cainiao.io/archives/697
+      # CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g
+      # CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -static
+      # cat objs/Makefile |grep "Wno-unused-parameter"; sleep 10; \
       make
 
 # RUN mkdir -p /rootfs/bin && \
