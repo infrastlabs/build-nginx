@@ -121,8 +121,8 @@ RUN ls -l /data/*; \
 #       cp /etc/ssl/certs/ca-certificates.crt /rootfs/etc/ssl/certs/ && \
 #     mkdir -p /rootfs/tmp
 COPY ./rootfs /rootfs
-ADD ./rootfs/nginx/conf/conf.tar.gz /rootfs/nginx/conf/
-RUN rm -f /rootfs/nginx/conf/conf.tar.gz; find /rootfs; \
+# ADD ./rootfs/nginx/conf/conf.tar.gz /rootfs/nginx/conf/
+RUN find /rootfs; \
   cp /tmp/nginx-$VERSION/objs/nginx /rootfs/nginx/sbin/
 
 
