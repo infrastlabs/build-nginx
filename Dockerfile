@@ -39,11 +39,11 @@ RUN ls -l /data/*; \
         # --http-log-path="/dev/stdout" \
         # --error-log-path="/dev/stderr" \
         \
-        # --http-client-body-temp-path="/tmp/client_temp" \
-        # --http-fastcgi-temp-path="/tmp/fastcgi_temp" \
-        # --http-proxy-temp-path="/tmp/proxy_temp" \
-        # --http-scgi-temp-path="/tmp/scgi_temp" \
-        # --http-uwsgi-temp-path="/tmp/uwsgi_temp" \
+        --http-client-body-temp-path="./temp/client_temp" \
+        --http-fastcgi-temp-path="./temp/fastcgi_temp" \
+        --http-proxy-temp-path="./temp/proxy_temp" \
+        --http-scgi-temp-path="./temp/scgi_temp" \
+        --http-uwsgi-temp-path="./temp/uwsgi_temp" \
         \
         # http://www.ttlsa.com/nginx/nginx-configure-descriptions/
         # https://blog.csdn.net/netlai/article/details/80016712
