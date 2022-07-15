@@ -10,7 +10,7 @@ ZLIB_CHECKSUM="91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9"
 ADD="curl -fSL -k"
 # $ADD https://nginx.org/download/nginx-$VERSION.tar.gz > data/nginx.tar.gz
 # $ADD https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz > data/openssl.tar.gz
-$ADD https://zlib.net/zlib-$ZLIB_VERSION.tar.gz > data/zlib.tar.gz
+# $ADD https://zlib.net/zlib-$ZLIB_VERSION.tar.gz > data/zlib.tar.gz
 
 # validate
 test "$(sha256sum data/nginx.tar.gz | awk '{print $1}')" == "$CHECKSUM" || echo "err: nginx.tar.gz"
