@@ -32,31 +32,52 @@ RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl && \
         --http-proxy-temp-path="/tmp/proxy_temp" \
         --http-scgi-temp-path="/tmp/scgi_temp" \
         --http-uwsgi-temp-path="/tmp/uwsgi_temp" \
+        # http://www.ttlsa.com/nginx/nginx-configure-descriptions/
+        # 启用select模块支持（一种轮询模式,不推荐在高载环境下使用）禁用：--without-select_module
         --with-select_module \
+        # 启用poll模块支持（功能与select相同，与select特性相同，为一种轮询模式,不推荐在高载环境下使用）
         --with-poll_module \
         --with-threads \
+        # 启用file aio支持（一种APL文件传输格式）
         --with-file-aio \
+        # 启用ngx_http_ssl_module支持（使支持https请求，需已安装openssl）
         --with-http_ssl_module \
         --with-http_v2_module \
+        # 启用ngx_http_realip_module支持（这个模块允许从请求标头更改客户端的IP地址值，默认为关）
         --with-http_realip_module \
+        # 启用ngx_http_addition_module支持（作为一个输出过滤器，支持不完全缓冲，分部分响应请求）
         --with-http_addition_module \
+        # 启用ngx_http_xslt_module支持（过滤转换XML请求）
         # --with-http_xslt_module \
+        # 启用ngx_http_image_filter_module支持（传输JPEG/GIF/PNG 图片的一个过滤器）（默认为不启用。gd库要用到）
         # --with-http_image_filter_module \
+        # 启用ngx_http_geoip_module支持（该模块创建基于与MaxMind GeoIP二进制文件相配的客户端IP地址的ngx_http_geoip_module变量）
         # --with-http_geoip_module \
+        # 启用ngx_http_sub_module支持（允许用一些其他文本替换nginx响应中的一些文本）
         --with-http_sub_module \
+        # 启用ngx_http_dav_module支持（增加PUT,DELETE,MKCOL：创建集合,COPY和MOVE方法）默认情况下为关闭，需编译开启
         --with-http_dav_module \
+        # 启用ngx_http_flv_module支持（提供寻求内存使用基于时间的偏移量文件）
         --with-http_flv_module \
         --with-http_mp4_module \
         --with-http_gunzip_module \
+        # 启用ngx_http_gzip_static_module支持（在线实时压缩输出数据流）
         --with-http_gzip_static_module \
         --with-http_auth_request_module \
+        # 启用ngx_http_random_index_module支持（从目录中随机挑选一个目录索引）
         --with-http_random_index_module \
+        # 启用ngx_http_secure_link_module支持（计算和检查要求所需的安全链接网址）
         --with-http_secure_link_module \
+        # 启用ngx_http_degradation_module支持（允许在内存不足的情况下返回204或444码）
         --with-http_degradation_module \
         --with-http_slice_module \
+        # 启用ngx_http_stub_status_module支持（获取nginx自上次启动以来的工作状态）
         --with-http_stub_status_module \
+        # 启用ngx_http_perl_module支持（该模块使nginx可以直接使用perl或通过ssi调用perl）
         # --with-http_perl_module \
+        # 启用POP3/IMAP4/SMTP代理模块支持
         --with-mail \
+        # 启用ngx_mail_ssl_module支持
         --with-mail_ssl_module \
         --with-stream \
         --with-stream_ssl_module \
