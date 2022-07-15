@@ -33,15 +33,18 @@ RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl && \
         --http-scgi-temp-path="/tmp/scgi_temp" \
         --http-uwsgi-temp-path="/tmp/uwsgi_temp" \
         # http://www.ttlsa.com/nginx/nginx-configure-descriptions/
+        # https://blog.csdn.net/netlai/article/details/80016712
         # 启用select模块支持（一种轮询模式,不推荐在高载环境下使用）禁用：--without-select_module
         --with-select_module \
         # 启用poll模块支持（功能与select相同，与select特性相同，为一种轮询模式,不推荐在高载环境下使用）
         --with-poll_module \
+        # Enables NGINX to use thread pools.
         --with-threads \
         # 启用file aio支持（一种APL文件传输格式）
         --with-file-aio \
         # 启用ngx_http_ssl_module支持（使支持https请求，需已安装openssl）
         --with-http_ssl_module \
+        # Provides support for HTTP/2.
         --with-http_v2_module \
         # 启用ngx_http_realip_module支持（这个模块允许从请求标头更改客户端的IP地址值，默认为关）
         --with-http_realip_module \
@@ -59,10 +62,13 @@ RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl && \
         --with-http_dav_module \
         # 启用ngx_http_flv_module支持（提供寻求内存使用基于时间的偏移量文件）
         --with-http_flv_module \
+        # --with-mp4_module: Provides pseudo-streaming server-side support for MP4 files. 
         --with-http_mp4_module \
+        # Decompresses responses with Content-Encoding: gzip for clients that do not support zip encoding method.
         --with-http_gunzip_module \
         # 启用ngx_http_gzip_static_module支持（在线实时压缩输出数据流）
         --with-http_gzip_static_module \
+        # Implements client authorization based on the result of a subrequest.
         --with-http_auth_request_module \
         # 启用ngx_http_random_index_module支持（从目录中随机挑选一个目录索引）
         --with-http_random_index_module \
@@ -70,6 +76,7 @@ RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl && \
         --with-http_secure_link_module \
         # 启用ngx_http_degradation_module支持（允许在内存不足的情况下返回204或444码）
         --with-http_degradation_module \
+        # Allows splitting a request into subrequests, each subrequest returns a certain range of response.
         --with-http_slice_module \
         # 启用ngx_http_stub_status_module支持（获取nginx自上次启动以来的工作状态）
         --with-http_stub_status_module \
@@ -79,7 +86,9 @@ RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl && \
         --with-mail \
         # 启用ngx_mail_ssl_module支持
         --with-mail_ssl_module \
+        # Enables the TCP proxy functionality. 
         --with-stream \
+        # Provides support for a stream proxy server to work with the SSL/TLS protocol. 
         --with-stream_ssl_module \
         --with-stream_realip_module \
         # --with-stream_geoip_module \
