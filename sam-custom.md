@@ -17,6 +17,10 @@
 ####### 1.22.0 stable
 ```
 
+![](./ngx-ver1.png)
+
+![](./ngx-ver2.png)
+
 ## old1
 
 ```bash
