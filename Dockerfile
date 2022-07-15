@@ -120,16 +120,17 @@ RUN ls -l /data/*; \
 #     mkdir -p /rootfs/etc/ssl/certs && \
 #       cp /etc/ssl/certs/ca-certificates.crt /rootfs/etc/ssl/certs/ && \
 #     mkdir -p /rootfs/tmp
-ADD ./rootfs /rootfs
-RUN find /rootfs; \
-  cp /tmp/nginx-$VERSION/objs/nginx /rootfs/sbin/
+COPY ./rootfs /rootfs
+ADD ./rootfs/nginx/conf/conf.tar.gz /rootfs/nginx/conf/
+RUN rm -f /rootfs/nginx/conf/conf.tar.gz; find /rootfs; \
+  cp /tmp/nginx-$VERSION/objs/nginx /rootfs/nginx/sbin/
 
 
 # FROM scratch
 FROM infrastlabs/alpine-ext:weak
 
 COPY --from=build --chown=10000:10000 /rootfs /rootfs
-WORKDIR /rootfs
+WORKDIR /rootfs/nginx
 # USER 10000:10000
 # ENTRYPOINT ["/bin/nginx"]
 # CMD ["-g", "daemon off;"]
