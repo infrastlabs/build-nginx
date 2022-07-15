@@ -64,3 +64,20 @@ configure arguments: --with-cc-opt=-static --with-ld-opt=-static --with-cpu-opt=
 
 11 directories, 8 files
 ```
+
+- 缩小Nginx编译的体积 https://www.cainiao.io/archives/697
+
+```bash
+      # https://blog.51cto.com/65147718/1858474?utm_source=debugrun
+      # #CFLAGS=”$CFLAGS -g” (注释掉这行,去掉 debug 模式编译,编译以后程序只有几百 k)
+      # https://www.cainiao.io/archives/697
+      # cat auto/cc/gcc |grep CFLAGS; \
+      sed -i "s^CFLAGS\=\"\$CFLAGS\ \-g\"^#CFLAGS=\"\$CFLAGS \-g\"^g" auto/cc/gcc; \
+[root@81b2c8ed8fa7 sbin]# ls -lh
+total 13M
+-rwxr-xr-x 1 10000 10000 13M Jul 15 18:51 nginx
+
+[root@3beb3a55da2a sbin]# ls -lh
+total 5.9M
+-rwxr-xr-x 1 10000 10000 5.9M Jul 15 20:08 nginx
+```
