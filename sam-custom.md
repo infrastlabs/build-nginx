@@ -5,6 +5,18 @@
 - Linux绿色版Nginx_怪人yo的博客-CSDN博客_nginx 绿色版 https://blog.csdn.net/weixin_43715518/article/details/122986204
 - 缩小Nginx编译的体积 https://www.cainiao.io/archives/697
 
+## vers
+
+```bash
+####### 1.21.6 mainline
+3.19|upgraded to 1.21.6 #https://gitee.com/g-mids/build-nginx/blob/19cb42b4290b83e9bb6de2c6d13a126b5ae7f0b0/Dockerfile
+4月4日 04:35|zlib to 1.2.12 #https://gitee.com/g-mids/build-nginx/commit/65fd92bc71515b8a7a8457e460011086b980d841
+5月4日 08:27|openssl to 1.1.1o #https://gitee.com/g-mids/build-nginx/commit/04e5b1a46f48f5335b54429d2bc283f75b5d19aa
+####### 1.23.0 mainline
+6月23日 04:05|to 1.23.0 #https://gitee.com/g-mids/build-nginx/commit/7efcdc9345cf9a4107ca7a570aad1ae0a58a56b1
+####### 1.22.0 stable
+```
+
 ## old1
 
 ```bash
