@@ -1,4 +1,5 @@
-FROM alpine:3 AS build
+# FROM alpine:3 AS build #alpine镜像make报Operation not permitted https://blog.csdn.net/u014595589/article/details/118693759
+FROM alpine:3.13 AS build
 
 ARG VERSION="1.23.0"
 ARG CHECKSUM="820acaa35b9272be9e9e72f6defa4a5f2921824709f8aa4772c78ab31ed94cd1"
@@ -9,11 +10,18 @@ ARG OPENSSL_CHECKSUM="9384a2b0570dd80358841464677115df785edb941c71211f75076d72fe
 ARG ZLIB_VERSION="1.2.12"
 ARG ZLIB_CHECKSUM="91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9"
 
+# aliyun.com
+RUN domain="mirrors.ustc.edu.cn"; \
+echo "http://$domain/alpine/v3.13/main" > /etc/apk/repositories; \
+echo "http://$domain/alpine/v3.13/community" >> /etc/apk/repositories
+RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl 
+
 # ADD https://nginx.org/download/nginx-$VERSION.tar.gz /tmp/nginx.tar.gz
 # ADD https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz /tmp/openssl.tar.gz
 # ADD https://zlib.net/zlib-$ZLIB_VERSION.tar.gz /tmp/zlib.tar.gz
-ADD ./data/* /data/
-RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl && \
+# ADD: 会解压tar.gz
+COPY ./data/* /data/
+RUN ls -l /data/*; \
     tar -C /tmp -xf /data/nginx.tar.gz && \
     tar -C /tmp -xf /data/openssl.tar.gz && \
     tar -C /tmp -xf /data/zlib.tar.gz && \
@@ -109,9 +117,10 @@ RUN mkdir -p /rootfs/bin && \
     mkdir -p /rootfs/tmp
 
 
-FROM scratch
+# FROM scratch
+FROM infrastlabs/alpine-ext:weak
 
-COPY --from=build --chown=10000:10000 /rootfs /
+COPY --from=build --chown=10000:10000 /rootfs /rootfs
 
 USER 10000:10000
 ENTRYPOINT ["/bin/nginx"]
