@@ -30,16 +30,21 @@ RUN ls -l /data/*; \
         --with-cc-opt="-static" \
         --with-ld-opt="-static" \
         --with-cpu-opt="generic" \
-        --sbin-path="/bin/nginx" \
-        --conf-path="/etc/nginx/nginx.conf" \
-        --pid-path="/tmp/nginx.pid" \
-        --http-log-path="/dev/stdout" \
-        --error-log-path="/dev/stderr" \
-        --http-client-body-temp-path="/tmp/client_temp" \
-        --http-fastcgi-temp-path="/tmp/fastcgi_temp" \
-        --http-proxy-temp-path="/tmp/proxy_temp" \
-        --http-scgi-temp-path="/tmp/scgi_temp" \
-        --http-uwsgi-temp-path="/tmp/uwsgi_temp" \
+        \
+        # /opt/svr/xxxx-sys/nginx/sbin/nginx
+        --prefix=../../nginx \
+        # --sbin-path="/bin/nginx" \
+        # --conf-path="/etc/nginx/nginx.conf" \
+        # --pid-path="/tmp/nginx.pid" \
+        # --http-log-path="/dev/stdout" \
+        # --error-log-path="/dev/stderr" \
+        \
+        # --http-client-body-temp-path="/tmp/client_temp" \
+        # --http-fastcgi-temp-path="/tmp/fastcgi_temp" \
+        # --http-proxy-temp-path="/tmp/proxy_temp" \
+        # --http-scgi-temp-path="/tmp/scgi_temp" \
+        # --http-uwsgi-temp-path="/tmp/uwsgi_temp" \
+        \
         # http://www.ttlsa.com/nginx/nginx-configure-descriptions/
         # https://blog.csdn.net/netlai/article/details/80016712
         # 启用select模块支持（一种轮询模式,不推荐在高载环境下使用）禁用：--without-select_module
@@ -106,22 +111,25 @@ RUN ls -l /data/*; \
         --with-zlib="/tmp/zlib-$ZLIB_VERSION" && \
       make
 
-RUN mkdir -p /rootfs/bin && \
-      cp /tmp/nginx-$VERSION/objs/nginx /rootfs/bin/ && \
-    mkdir -p /rootfs/etc && \
-      echo "nogroup:*:10000:nobody" > /rootfs/etc/group && \
-      echo "nobody:*:10000:10000:::" > /rootfs/etc/passwd && \
-    mkdir -p /rootfs/etc/nginx && \
-    mkdir -p /rootfs/etc/ssl/certs && \
-      cp /etc/ssl/certs/ca-certificates.crt /rootfs/etc/ssl/certs/ && \
-    mkdir -p /rootfs/tmp
+# RUN mkdir -p /rootfs/bin && \
+#       cp /tmp/nginx-$VERSION/objs/nginx /rootfs/bin/ && \
+#     mkdir -p /rootfs/etc && \
+#       echo "nogroup:*:10000:nobody" > /rootfs/etc/group && \
+#       echo "nobody:*:10000:10000:::" > /rootfs/etc/passwd && \
+#     mkdir -p /rootfs/etc/nginx && \
+#     mkdir -p /rootfs/etc/ssl/certs && \
+#       cp /etc/ssl/certs/ca-certificates.crt /rootfs/etc/ssl/certs/ && \
+#     mkdir -p /rootfs/tmp
+ADD ./rootfs /rootfs
+RUN find /rootfs; \
+  cp /tmp/nginx-$VERSION/objs/nginx /rootfs/sbin/
 
 
 # FROM scratch
 FROM infrastlabs/alpine-ext:weak
 
 COPY --from=build --chown=10000:10000 /rootfs /rootfs
-
-USER 10000:10000
-ENTRYPOINT ["/bin/nginx"]
-CMD ["-g", "daemon off;"]
+WORKDIR /rootfs
+# USER 10000:10000
+# ENTRYPOINT ["/bin/nginx"]
+# CMD ["-g", "daemon off;"]
