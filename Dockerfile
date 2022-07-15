@@ -133,7 +133,9 @@ RUN ls -l /data/*; \
 COPY ./rootfs /rootfs
 # ADD ./rootfs/nginx/conf/conf.tar.gz /rootfs/nginx/conf/
 # TODO drop: ./temp/client_temp/.gitkeep
-RUN find /rootfs; \
+RUN \
+  find /rootfs  -name ".gitkeep" -exec rm -rf {} \;; \
+  find /rootfs; \
   cp /tmp/nginx-$VERSION/objs/nginx /rootfs/nginx/sbin/
 
 
@@ -143,5 +145,6 @@ FROM infrastlabs/alpine-ext:weak
 COPY --from=build --chown=10000:10000 /rootfs /rootfs
 WORKDIR /rootfs/nginx
 # USER 10000:10000
-# ENTRYPOINT ["/bin/nginx"]
+# ENTRYPOINT ["bash"]
 # CMD ["-g", "daemon off;"]
+CMD ["/rootfs/nginx/start.sh"]
