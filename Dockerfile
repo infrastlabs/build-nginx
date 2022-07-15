@@ -122,6 +122,7 @@ RUN ls -l /data/*; \
 #     mkdir -p /rootfs/tmp
 COPY ./rootfs /rootfs
 # ADD ./rootfs/nginx/conf/conf.tar.gz /rootfs/nginx/conf/
+# TODO drop: ./temp/client_temp/.gitkeep
 RUN find /rootfs; \
   cp /tmp/nginx-$VERSION/objs/nginx /rootfs/nginx/sbin/
 
