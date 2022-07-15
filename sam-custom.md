@@ -78,6 +78,6 @@ total 13M
 -rwxr-xr-x 1 10000 10000 13M Jul 15 18:51 nginx
 
 [root@3beb3a55da2a sbin]# ls -lh
-total 5.9M
+total 5.9M #static size;
 -rwxr-xr-x 1 10000 10000 5.9M Jul 15 20:08 nginx
 ```
