@@ -21,6 +21,23 @@
 
 ![](./ngx-ver2.png)
 
+## mods
+
+https://hub.fastgit.xyz/search?q=nginx+module&type=Repositories #2,816 repository results 
+
+- arut/nginx-rtmp-module 12k
+- openresty/lua-nginx-module 10k
+- winshining/nginx-http-flv-module 2.2k
+- vozlt/nginx-module-vts 2.7k
+- kaltura/nginx-vod-module 1.6k
+- yaoweibin/nginx_tcp_proxy_module 1.6k
+- wandenberg/nginx-push-stream-module 2.1k
+- 
+- vouch/vouch-proxy #SSO and OAuth / OIDC login solution for Nginx using the auth_request module
+- loveshell/ngx_lua_waf 基于lua-nginx-module(openresty)的web应用防火墙 
+- alexazhou/VeryNginx base on lua-nginx-module( openresty ) which provide WAF, Control Panel, 
+- ADD-SP/ngx_waf #Nginx firewall module & 方便、高性能、兼容 ModSecurity 的 Nginx 防火墙模块 
+
 ## old1
 
 ```bash
