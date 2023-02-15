@@ -142,7 +142,9 @@ RUN \
 
 
 # FROM scratch
-FROM infrastlabs/alpine-ext:weak
+# FROM infrastlabs/alpine-ext:weak
+# for x64/arm64
+FROM alpine:3.13
 
 COPY --from=build --chown=10000:10000 /rootfs /rootfs
 WORKDIR /rootfs/nginx
