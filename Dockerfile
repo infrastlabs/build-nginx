@@ -18,6 +18,13 @@ echo "http://$domain/alpine/v3.13/main" > /etc/apk/repositories; \
 echo "http://$domain/alpine/v3.13/community" >> /etc/apk/repositories
 RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl 
 
+
+############NGINX-ECHO模块
+RUN apk add git
+# https://blog.csdn.net/weixin_44178770/article/details/124389811
+RUN cd /usr/local; git clone --depth 1 --branch v0.61 https://ghproxy.com/https://github.com/openresty/echo-nginx-module; \
+  cd /usr/local/echo-nginx-module; git remote -v; ls -la;
+
 # ADD https://nginx.org/download/nginx-$VERSION.tar.gz /tmp/nginx.tar.gz
 # ADD https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz /tmp/openssl.tar.gz
 # ADD https://zlib.net/zlib-$ZLIB_VERSION.tar.gz /tmp/zlib.tar.gz
@@ -115,7 +122,9 @@ RUN ls -l /data/*; \
         --with-stream_ssl_preread_module \
         --with-compat \
         --with-openssl="/tmp/openssl-$OPENSSL_VERSION" \
-        --with-zlib="/tmp/zlib-$ZLIB_VERSION" && \
+        --with-zlib="/tmp/zlib-$ZLIB_VERSION" \
+        --add-module=/usr/local/echo-nginx-module \
+         && \
       # find objs && sleep 10; \
       # https://www.cainiao.io/archives/697
       # CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g
@@ -151,4 +160,4 @@ WORKDIR /rootfs/nginx
 # USER 10000:10000
 # ENTRYPOINT ["bash"]
 # CMD ["-g", "daemon off;"]
-CMD ["/rootfs/nginx/start.sh"]
+CMD ["/bin/sh", "/rootfs/nginx/start.sh"]
