@@ -15,7 +15,7 @@ test -z "$(uname -a |grep aarch64)" && arch=x64 || arch=arm64
 ns=infrastlabs
 # cache="--no-cache"
 # pull="--pull"
-ver=latest #02: +full; 04: bins;
+ver=latest-echo #02: +full; 04: bins;
 img="build-nginx:$arch-$ver"
 
 docker build $cache $pull -t $repo/$ns/$img -f Dockerfile . 
