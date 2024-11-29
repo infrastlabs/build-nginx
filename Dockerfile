@@ -1,16 +1,17 @@
 # FROM alpine:3 AS build #alpine镜像make报Operation not permitted https://blog.csdn.net/u014595589/article/details/118693759
-FROM alpine:3.13 AS build
+FROM registry.cn-shenzhen.aliyuncs.com/infrasync/alpine:3.13.12 AS build
 
 # ARG VERSION="1.23.0"
 # mainline > stableVer
-ARG VERSION="1.22.0"
-ARG CHECKSUM="820acaa35b9272be9e9e72f6defa4a5f2921824709f8aa4772c78ab31ed94cd1"
+ARG VERSION="1.26.2"
+# ARG VERSION="1.22.0"
+# ARG CHECKSUM="820acaa35b9272be9e9e72f6defa4a5f2921824709f8aa4772c78ab31ed94cd1"
 
-ARG OPENSSL_VERSION="1.1.1o"
-ARG OPENSSL_CHECKSUM="9384a2b0570dd80358841464677115df785edb941c71211f75076d72fe6b438f"
+# ARG OPENSSL_VERSION="1.1.1o"
+# ARG OPENSSL_CHECKSUM="9384a2b0570dd80358841464677115df785edb941c71211f75076d72fe6b438f"
 
-ARG ZLIB_VERSION="1.2.12"
-ARG ZLIB_CHECKSUM="91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9"
+# ARG ZLIB_VERSION="1.2.12"
+# ARG ZLIB_CHECKSUM="91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9"
 
 # aliyun.com
 RUN domain="mirrors.ustc.edu.cn"; \
@@ -22,14 +23,15 @@ RUN apk add build-base ca-certificates gcc linux-headers pcre-dev perl
 ############NGINX-ECHO模块
 RUN apk add git
 # https://blog.csdn.net/weixin_44178770/article/details/124389811
-RUN cd /usr/local; git clone --depth 1 --branch v0.61 https://ghproxy.com/https://github.com/openresty/echo-nginx-module; \
+# RUN cd /usr/local; git clone --depth 1 --branch v0.61 https://ghproxy.com/https://github.com/openresty/echo-nginx-module; \
+RUN cd /usr/local; git clone --depth 1 --branch v0.63 https://gitee.com/g-mids/echo-nginx-module; \
   cd /usr/local/echo-nginx-module; git remote -v; ls -la;
 
 # ADD https://nginx.org/download/nginx-$VERSION.tar.gz /tmp/nginx.tar.gz
 # ADD https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz /tmp/openssl.tar.gz
 # ADD https://zlib.net/zlib-$ZLIB_VERSION.tar.gz /tmp/zlib.tar.gz
 # ADD: 会解压tar.gz
-COPY ./data/* /data/
+COPY ./data/$VERSION/*.tar.gz /data/
 RUN ls -l /data/*; \
     tar -C /tmp -xf /data/nginx.tar.gz && \
     tar -C /tmp -xf /data/openssl.tar.gz && \
@@ -153,7 +155,7 @@ RUN \
 # FROM scratch
 # FROM infrastlabs/alpine-ext:weak
 # for x64/arm64
-FROM alpine:3.13
+FROM registry.cn-shenzhen.aliyuncs.com/infrasync/alpine:3.13.12
 
 COPY --from=build --chown=10000:10000 /rootfs /rootfs
 WORKDIR /rootfs/nginx
