@@ -1,6 +1,4 @@
 name: "Build and push Docker image"
-
-
 on:
   push:
     branches: ["*"]
@@ -8,26 +6,155 @@ on:
   schedule:
     - cron: "0 0 * * 0"
 
-
 jobs:
-
   main:
     runs-on: "ubuntu-20.04"
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v2"
-      - name: "Prepare build environment; build; push to Docker Hub, RedHat Quay"
+      
+      - name: Setup QEMU
+        # uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2 #ref docker-baseimage-gui
+        with:
+          platforms: arm,arm64,ppc64le,mips64,s390x
+
+      - name: Setup Docker Buildx
+        # uses: docker/setup-buildx-action@
+        uses: docker/setup-buildx-action@v2
+        with:
+          driver-opts: network=host
+
+      - name: Call buildx.sh(build with ali's cache, push)
         run: |
-          IMAGE_TAG="$(echo '${{ github.ref }}' | sed -e 's,.*/\(.*\),\1,')"
-          [ "$IMAGE_TAG" == 'master' ] && IMAGE_TAG='latest'
-          [ "$IMAGE_TAG" == 'main' ] && IMAGE_TAG='latest'
+          # VARS
+          echo ${{ github.repository_owner }} #infrastlabs
+          echo ${{ github.repository }}
+          echo ${{ secrets.DOCKER_REGISTRY_PW_DOCKERHUB }} #fill not show in log
+          # INFO
+          pwd && ls -l
+          docker version
+          free -h; df -h; ip a |grep inet; uname -a;
+          docker image prune -a -f; df -h
+          
+          # ENV
+          # registry-1.docker.io| noneView
+          export DOCKER_REGISTRY_USER_dockerhub=${{ secrets.DOCKER_REGISTRY_USER_DOCKERHUB }}
+          export DOCKER_REGISTRY_PW_dockerhub=${{ secrets.DOCKER_REGISTRY_PW_DOCKERHUB }}
+          # ali's| size, none-arch, layers;
+          export DOCKER_REGISTRY_USER_infrastSubUser2=${{ secrets.DOCKER_REGISTRY_USER_INFRASTSUBUSER2 }}
+          export DOCKER_REGISTRY_PW_infrastSubUser2=${{ secrets.DOCKER_REGISTRY_PW_INFRASTSUBUSER2 }}
+          
+          export REPO_HUB=registry-1.docker.io
+          export REPO_ALI=registry.cn-shenzhen.aliyuncs.com
+          export REPO=$REPO_ALI #REPO_HUB REPO_ALI ##without "xx/"
+          
+          echo undockPkg; doBuild=true
+          test "true" == "$doBuild" && bash buildx.sh nginx #compile
 
-          docker buildx create --use
+          echo undockPkg; doPkg=true
+          cd .github/workflows; test "true" == "$doPkg" && bash undock.sh;
+      # - name: "Prepare build environment; build; push to Docker Hub, RedHat Quay"
+      #   run: |
+      #     # echo 123; exit 0
+      #     touch ebook.pdf; echo abc> ebook.pdf
+      #     # IMAGE_TAG="$(echo '${{ github.ref }}' | sed -e 's,.*/\(.*\),\1,')"
+      #     # [ "$IMAGE_TAG" == 'master' ] && IMAGE_TAG='latest'
+      #     # [ "$IMAGE_TAG" == 'main' ] && IMAGE_TAG='latest'
 
-          IMAGE_REGISTRY='docker.io'
-          echo '${{ secrets.DOCKER_HUB_PASSWORD }}' | docker login --username '${{ secrets.DOCKER_HUB_USERNAME }}' --password-stdin "$IMAGE_REGISTRY"
-          docker buildx build --push --platform 'linux/amd64' --tag "$IMAGE_REGISTRY/${{ github.repository }}:$IMAGE_TAG" --file Dockerfile .
+      #     # docker buildx create --use
 
-          IMAGE_REGISTRY='quay.io'
-          echo '${{ secrets.REDHAT_QUAY_PASSWORD }}' | docker login --username '${{ secrets.REDHAT_QUAY_USERNAME }}' --password-stdin "$IMAGE_REGISTRY"
-          docker buildx build --push --platform 'linux/amd64' --tag "$IMAGE_REGISTRY/${{ github.repository }}:$IMAGE_TAG" --file Dockerfile .
+      #     # IMAGE_REGISTRY='docker.io'
+      #     # echo '${{ secrets.DOCKER_HUB_PASSWORD }}' | docker login --username '${{ secrets.DOCKER_HUB_USERNAME }}' --password-stdin "$IMAGE_REGISTRY"
+      #     # docker buildx build --push --platform 'linux/amd64' --tag "$IMAGE_REGISTRY/${{ github.repository }}:$IMAGE_TAG" --file Dockerfile .
+
+      #     # IMAGE_REGISTRY='quay.io'
+      #     # echo '${{ secrets.REDHAT_QUAY_PASSWORD }}' | docker login --username '${{ secrets.REDHAT_QUAY_USERNAME }}' --password-stdin "$IMAGE_REGISTRY"
+      #     # docker buildx build --push --platform 'linux/amd64' --tag "$IMAGE_REGISTRY/${{ github.repository }}:$IMAGE_TAG" --file Dockerfile .
+      # ###############################################
+      # https://github.com/typst-doc-cn/tutorial/commit/8cc1d86152139e248b4107e7c649ea63dfabeab7#diff-5c3fa597431eda03ac3339ae6bf7f05e1a50d6fc7333679ec38e21b337cb6721R15
+        # Artifact ebook.zip successfully finalized. Artifact ID 2259179758
+        # Artifact ebook has been successfully uploaded! Final size is 138 bytes. Artifact ID is 2259179758
+        # Artifact download URL: https://github.com/infrastlabs/build-nginx/actions/runs/12111045794/artifacts/2259179758
+      # ###############################################
+      # - uses: actions/upload-artifact@v4 #直接upload, OK
+      #   id: artifact-upload-step
+      #   with:
+      #     name: ebook
+      #     path: ebook.pdf
+      # - run:  echo 'Artifact URL is ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.artifact-upload-step.outputs.artifact-id }}'
+      # 
+      # ###############################################
+      # https://blog.csdn.net/m0_57236802/article/details/133850667
+      #  Parameter token or opts.auth is required
+      #  Published releases must have a valid tag: pre_receive Sorry, branch or tag names starting with 'refs/' are not allowed.
+      #  Bad credentials; pubArchived@21.3.4
+      # ###############################################
+      # - name: Create Release
+      #   id: create_release
+      #   uses: actions/create-release@v1 #creds错误; pubArchived@21.3.4
+      #   env:
+      #     # https://blog.csdn.net/gitblog_00919/article/details/142539600
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #官方内置的 secrets ，我们直接使用就可
+      #   with:
+      #     tag_name: v1.0 #${{ github.ref }}
+      #     release_name: Release v1.0 #${{ github.ref }}
+      #     body: |
+      #       Automated release for tag ${{ github.ref }}          
+      #     draft: false
+      #     prerelease: false
+      # - name: Upload File
+      #   uses: actions/upload-release-asset@v1
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ebook.pdf
+      #     asset_name: ebook
+      #     asset_content_type: application/vnd.android.package-archive
+      #  再次触发action的时候如何在同一个release下增加文件
+      # - name: Get Release
+      #   id: get_release
+      #   run: |
+      #     RELEASE_ID=$(curl --silent "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/tags/v1.0" \
+      #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #       | jq '.id')
+      #     echo "::set-output name=release_id::$RELEASE_ID"
+      # - name: Upload APK
+      #   uses: actions/upload-release-asset@v1
+      #   with:
+      #     upload_url: https://uploads.github.com/repos/$GITHUB_REPOSITORY/releases/${{ steps.get_release.outputs.release_id }}/assets
+      #     asset_path: app/build/outputs/apk/release/app-release.apk
+      #     asset_name: app-release.apk
+      #     asset_content_type: application/vnd.android.package-archive
+      # 
+      # ###############################################
+      # https://blog.csdn.net/heroboyluck/article/details/142185264
+      #  GitHub Releases requires a tag
+      # https://github.com/softprops/action-gh-release
+      #  outputs
+      # ###############################################
+      - name: create github release
+        id: new_release
+        uses: softprops/action-gh-release@v2 #v2.0.8
+        # if: startsWith(github.ref, 'refs/tags/')
+        with:
+          name: latest
+          tag_name: v24.12
+          make_latest: true
+          token: ${{ github.token }} #Defaults to ${{ github.token }}
+          body: |
+            Automated release-2024 for tag ${{ github.ref }}          
+          # append_body
+          # generate_release_notes
+          draft: false
+          prerelease: false
+          preserve_order: true
+          fail_on_unmatched_files: false
+          # repository:  #Defaults to GITHUB_REPOSITORY env variable
+          # body_path: 
+          # target_commitish
+          # files: ebook.pdf
+          files: |
+            # ebook.pdf
+            # LICENSE
+            .github/workflows/.ws/pkgs/nginx*.tar.gz
+
