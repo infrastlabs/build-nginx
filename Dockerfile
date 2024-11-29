@@ -1,16 +1,16 @@
 FROM alpine:3 AS build
 
-ARG VERSION="1.27.3"
-ARG CHECKSUM="ba23a9568f442036b61cd0e29bd66a47b90634efa91e0b2cf2d719057a9b7903"
+ARG VERSION="1.23.0"
+ARG CHECKSUM="820acaa35b9272be9e9e72f6defa4a5f2921824709f8aa4772c78ab31ed94cd1"
 
-ARG OPENSSL_VERSION="3.3.2"
-ARG OPENSSL_CHECKSUM="2e8a40b01979afe8be0bbfb3de5dc1c6709fedb46d6c89c10da114ab5fc3d281"
+ARG OPENSSL_VERSION="1.1.1o"
+ARG OPENSSL_CHECKSUM="9384a2b0570dd80358841464677115df785edb941c71211f75076d72fe6b438f"
 
-ARG ZLIB_VERSION="1.3.1"
-ARG ZLIB_CHECKSUM="9a93b2b7dfdac77ceba5a558a580e74667dd6fede4585b91eefb60f03b72df23"
+ARG ZLIB_VERSION="1.2.12"
+ARG ZLIB_CHECKSUM="91844808532e5ce316b3c010929493c0244f3d37593afd6de04f71821d5136d9"
 
 ADD https://nginx.org/download/nginx-$VERSION.tar.gz /tmp/nginx.tar.gz
-ADD https://github.com/openssl/openssl/releases/download/openssl-$OPENSSL_VERSION/openssl-$OPENSSL_VERSION.tar.gz /tmp/openssl.tar.gz
+ADD https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz /tmp/openssl.tar.gz
 ADD https://zlib.net/zlib-$ZLIB_VERSION.tar.gz /tmp/zlib.tar.gz
 
 RUN [ "$(sha256sum /tmp/nginx.tar.gz | awk '{print $1}')" = "$CHECKSUM" ] && \
