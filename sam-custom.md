@@ -5,6 +5,33 @@
 - Linux绿色版Nginx_怪人yo的博客-CSDN博客_nginx 绿色版 https://blog.csdn.net/weixin_43715518/article/details/122986204
 - 缩小Nginx编译的体积 https://www.cainiao.io/archives/697
 
+
+## Changelog
+
+**24.11**
+
+- v1.26.2
+
+**23.09.26**
+
+- ngx-echo v1.22.0
+
+```bash
+curl -fSL http://172.25.21.60:1180/hello
+curl -fSL http://172.25.21.60:1180/timed_hello
+curl -fSL http://172.25.21.60:1180/timed_hello2
+```
+
+**23.02.15**
+
+- arm64-nginx v1.22.0
+
+**22.07.15**
+
+- init static x64-nginx v1.22.0
+
+
+
 ## vers
 
 ```bash
