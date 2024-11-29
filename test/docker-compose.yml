@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   nginx-echo:
-    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/build-nginx:x64-latest-echo
+    image: registry.cn-shenzhen.aliyuncs.com/infrastlabs/build-nginx:v1.26.2-echo #x64-latest-echo
     command: /bin/sh /srv/local/nginx/start.sh
     network_mode: host
     volumes:
