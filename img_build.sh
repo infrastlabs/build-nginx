@@ -12,6 +12,11 @@ echo "${DOCKER_REGISTRY_PW_infrastSubUser2}" |docker login --username=${DOCKER_R
 test -z "$(uname -a |grep aarch64)" && arch=x64 || arch=arm64
 
 
+# barge_docker_err: cgroups: cannot find cgroup mount destination: unknown.
+# https://blog.csdn.net/HubertToLee/article/details/90373627
+#  sudo mkdir /sys/fs/cgroup/systemd
+#  sudo mount -t cgroup -o none,name=systemd cgroup /sys/fs/cgroup/systemd
+
 ns=infrastlabs
 # cache="--no-cache"
 # pull="--pull"
