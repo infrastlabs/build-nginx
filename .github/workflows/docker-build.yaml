@@ -92,7 +92,7 @@ jobs:
       # ###############################################
       - name: create github release
         id: new_release
-        uses: softprops/action-gh-release@v2.0.8
+        uses: softprops/action-gh-release@v2 #v2.0.8
         # if: startsWith(github.ref, 'refs/tags/')
         with:
           name: latest
