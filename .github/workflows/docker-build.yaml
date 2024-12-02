@@ -41,21 +41,22 @@ jobs:
       # - run:  echo 'Artifact URL is ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.artifact-upload-step.outputs.artifact-id }}'
       # 
       # https://blog.csdn.net/m0_57236802/article/details/133850667
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-      - name: Upload File
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ebook.pdf
-          asset_name: ebook
-          asset_content_type: application/vnd.android.package-archive
+      #  Parameter token or opts.auth is required
+      # - name: Create Release
+      #   id: create_release
+      #   uses: actions/create-release@v1
+      #   with:
+      #     tag_name: ${{ github.ref }}
+      #     release_name: Release ${{ github.ref }}
+      #     draft: false
+      #     prerelease: false
+      # - name: Upload File
+      #   uses: actions/upload-release-asset@v1
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: ebook.pdf
+      #     asset_name: ebook
+      #     asset_content_type: application/vnd.android.package-archive
       #  再次触发action的时候如何在同一个release下增加文件
       # - name: Get Release
       #   id: get_release
@@ -73,10 +74,10 @@ jobs:
       #     asset_content_type: application/vnd.android.package-archive
       # 
       # https://blog.csdn.net/heroboyluck/article/details/142185264
-      # - name: create github release
-      #   id: new_release
-      #   uses: softprops/action-gh-release@v2.0.8
-      #   with:
-      #     name: latest
-      #     make_latest: true
-      #     files: rsup-web.tar.gz
+      - name: create github release
+        id: new_release
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          name: latest
+          make_latest: true
+          files: ebook.pdf
