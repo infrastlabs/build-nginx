@@ -50,7 +50,7 @@ jobs:
           export REPO=$REPO_ALI #REPO_HUB REPO_ALI ##without "xx/"
           
           echo undockPkg; doBuild=true
-          test "true" == "$doBuild" && bbash buildx.sh nginx #compile
+          test "true" == "$doBuild" && bash buildx.sh nginx #compile
 
           echo undockPkg; doPkg=true
           cd .github/workflows; test "true" == "$doPkg" && bash undock.sh;
