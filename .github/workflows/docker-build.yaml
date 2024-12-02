@@ -45,9 +45,14 @@ jobs:
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
+        # https://blog.csdn.net/gitblog_00919/article/details/142539600
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #官方内置的 secrets ，我们直接使用就可
         with:
           tag_name: ${{ github.ref }}
           release_name: Release ${{ github.ref }}
+          body: |
+            Automated release for tag ${{ github.ref }}          
           draft: false
           prerelease: false
       - name: Upload File
