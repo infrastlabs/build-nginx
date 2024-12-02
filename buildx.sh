@@ -20,8 +20,8 @@ function doBuildx(){
     cimg="build-nginx-cache:$tag"
     cache="--cache-from type=registry,ref=$ali/$ns/$cimg --cache-to type=registry,ref=$ali/$ns/$cimg"
     
-    plat="--platform linux/amd64,linux/arm64,linux/arm" #,linux/arm
-    # plat="--platform linux/amd64" #
+    # plat="--platform linux/amd64,linux/arm64,linux/arm" #,linux/arm
+    plat="--platform linux/amd64,linux/arm64" #
 
     compile="alpine-compile";
     # test "$plat" != "--platform linux/amd64,linux/arm64,linux/arm" && compile="${compile}-dbg"
@@ -34,8 +34,8 @@ function doBuildx(){
     """
 
     # cd flux
-    test "$plat" != "--platform linux/amd64,linux/arm64,linux/arm" && img="${img}-dbg"
-    test "$plat" != "--platform linux/amd64,linux/arm64,linux/arm" && cimg="${cimg}-dbg"
+    # test "$plat" != "--platform linux/amd64,linux/arm64,linux/arm" && img="${img}-dbg"
+    # test "$plat" != "--platform linux/amd64,linux/arm64,linux/arm" && cimg="${cimg}-dbg"
     cache="--cache-from type=registry,ref=$ali/$ns/$cimg --cache-to type=registry,ref=$ali/$ns/$cimg"
     
     docker buildx build $cache $plat $args --push -t $repo/$ns/$img -f $dockerfile . 
