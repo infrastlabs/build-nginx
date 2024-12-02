@@ -98,6 +98,18 @@ jobs:
           name: latest
           tag_name: v1.0
           make_latest: true
+          token: ${{ github.token }} #Defaults to ${{ github.token }}
+          body: |
+            Automated release-2024 for tag ${{ github.ref }}          
+          # append_body
+          # generate_release_notes
+          draft: false
+          prerelease: false
+          preserve_order: true
+          fail_on_unmatched_files: false
+          # repository:  #Defaults to GITHUB_REPOSITORY env variable
+          # body_path: 
+          # target_commitish
           # files: ebook.pdf
           files: |
             ebook.pdf
