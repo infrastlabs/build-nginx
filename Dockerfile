@@ -1,5 +1,6 @@
 # FROM alpine:3 AS build #alpine镜像make报Operation not permitted https://blog.csdn.net/u014595589/article/details/118693759
-FROM registry.cn-shenzhen.aliyuncs.com/infrasync/alpine:3.13.12 AS build
+# FROM registry.cn-shenzhen.aliyuncs.com/infrasync/alpine:3.13.12 AS build
+FROM alpine:3.13.12 AS build
 
 # ARG VERSION="1.23.0"
 # mainline > stableVer
@@ -162,7 +163,8 @@ RUN \
 # FROM scratch
 # FROM infrastlabs/alpine-ext:weak
 # for x64/arm64
-FROM registry.cn-shenzhen.aliyuncs.com/infrasync/alpine:3.13.12
+# FROM registry.cn-shenzhen.aliyuncs.com/infrasync/alpine:3.13.12
+FROM alpine:3.13.12
 
 COPY --from=build --chown=10000:10000 /rootfs /rootfs
 WORKDIR /rootfs/nginx
