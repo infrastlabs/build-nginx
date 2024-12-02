@@ -42,6 +42,7 @@ jobs:
       # 
       # https://blog.csdn.net/m0_57236802/article/details/133850667
       #  Parameter token or opts.auth is required
+      #  Published releases must have a valid tag: pre_receive Sorry, branch or tag names starting with 'refs/' are not allowed.
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -49,8 +50,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} #官方内置的 secrets ，我们直接使用就可
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: v1.0 #${{ github.ref }}
+          release_name: Release v1.0 #${{ github.ref }}
           body: |
             Automated release for tag ${{ github.ref }}          
           draft: false
