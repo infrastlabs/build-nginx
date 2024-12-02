@@ -14,7 +14,8 @@ jobs:
         uses: "actions/checkout@v2"
       - name: "Prepare build environment; build; push to Docker Hub, RedHat Quay"
         run: |
-          echo 123; exit 0
+          # echo 123; exit 0
+          touch ebook.pdf; echo abc> ebook.pdf
           # IMAGE_TAG="$(echo '${{ github.ref }}' | sed -e 's,.*/\(.*\),\1,')"
           # [ "$IMAGE_TAG" == 'master' ] && IMAGE_TAG='latest'
           # [ "$IMAGE_TAG" == 'main' ] && IMAGE_TAG='latest'
@@ -28,3 +29,25 @@ jobs:
           # IMAGE_REGISTRY='quay.io'
           # echo '${{ secrets.REDHAT_QUAY_PASSWORD }}' | docker login --username '${{ secrets.REDHAT_QUAY_USERNAME }}' --password-stdin "$IMAGE_REGISTRY"
           # docker buildx build --push --platform 'linux/amd64' --tag "$IMAGE_REGISTRY/${{ github.repository }}:$IMAGE_TAG" --file Dockerfile .
+      # https://github.com/typst-doc-cn/tutorial/commit/8cc1d86152139e248b4107e7c649ea63dfabeab7#diff-5c3fa597431eda03ac3339ae6bf7f05e1a50d6fc7333679ec38e21b337cb6721R15
+      - uses: actions/upload-artifact@v4
+        id: artifact-upload-step
+        with:
+          name: ebook
+          path: ebook.pdf
+      # https://blog.csdn.net/m0_57236802/article/details/133850667
+      # - name: Upload APK
+      #   uses: actions/upload-release-asset@v1
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: app/build/outputs/apk/release/app-release.apk
+      #     asset_name: app-release.apk
+      #     asset_content_type: application/vnd.android.package-archive
+      # https://blog.csdn.net/heroboyluck/article/details/142185264
+      # - name: create github release
+      #   id: new_release
+      #   uses: softprops/action-gh-release@v2.0.8
+      #   with:
+      #     name: latest
+      #     make_latest: true
+      #     files: rsup-web.tar.gz
