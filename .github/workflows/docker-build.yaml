@@ -30,19 +30,48 @@ jobs:
           # echo '${{ secrets.REDHAT_QUAY_PASSWORD }}' | docker login --username '${{ secrets.REDHAT_QUAY_USERNAME }}' --password-stdin "$IMAGE_REGISTRY"
           # docker buildx build --push --platform 'linux/amd64' --tag "$IMAGE_REGISTRY/${{ github.repository }}:$IMAGE_TAG" --file Dockerfile .
       # https://github.com/typst-doc-cn/tutorial/commit/8cc1d86152139e248b4107e7c649ea63dfabeab7#diff-5c3fa597431eda03ac3339ae6bf7f05e1a50d6fc7333679ec38e21b337cb6721R15
-      - uses: actions/upload-artifact@v4
-        id: artifact-upload-step
-        with:
-          name: ebook
-          path: ebook.pdf
+        # Artifact ebook.zip successfully finalized. Artifact ID 2259179758
+        # Artifact ebook has been successfully uploaded! Final size is 138 bytes. Artifact ID is 2259179758
+        # Artifact download URL: https://github.com/infrastlabs/build-nginx/actions/runs/12111045794/artifacts/2259179758
+      # - uses: actions/upload-artifact@v4
+      #   id: artifact-upload-step
+      #   with:
+      #     name: ebook
+      #     path: ebook.pdf
+      # - run:  echo 'Artifact URL is ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/artifacts/${{ steps.artifact-upload-step.outputs.artifact-id }}'
+      # 
       # https://blog.csdn.net/m0_57236802/article/details/133850667
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+      - name: Upload File
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ebook.pdf
+          asset_name: ebook
+          asset_content_type: application/vnd.android.package-archive
+      #  再次触发action的时候如何在同一个release下增加文件
+      # - name: Get Release
+      #   id: get_release
+      #   run: |
+      #     RELEASE_ID=$(curl --silent "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/tags/v1.0" \
+      #       -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+      #       | jq '.id')
+      #     echo "::set-output name=release_id::$RELEASE_ID"
       # - name: Upload APK
       #   uses: actions/upload-release-asset@v1
       #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     upload_url: https://uploads.github.com/repos/$GITHUB_REPOSITORY/releases/${{ steps.get_release.outputs.release_id }}/assets
       #     asset_path: app/build/outputs/apk/release/app-release.apk
       #     asset_name: app-release.apk
       #     asset_content_type: application/vnd.android.package-archive
+      # 
       # https://blog.csdn.net/heroboyluck/article/details/142185264
       # - name: create github release
       #   id: new_release
