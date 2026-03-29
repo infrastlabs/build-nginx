@@ -2,9 +2,9 @@ name: "Build and push Docker image"
 on:
   push:
     branches: ["*"]
-    tags: ["*"]
-  schedule:
-    - cron: "0 0 * * 0"
+    # tags: ["*"]
+  # schedule:
+  #   - cron: "0 0 * * 0"
 
 jobs:
   main:
