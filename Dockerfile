@@ -88,7 +88,7 @@ RUN ls -l /data/*; \
         # 启用ngx_http_addition_module支持（作为一个输出过滤器，支持不完全缓冲，分部分响应请求）
         --with-http_addition_module \
         # 启用ngx_http_xslt_module支持（过滤转换XML请求）
-        --with-http_xslt_module \
+        # --with-http_xslt_module \
         # 启用ngx_http_image_filter_module支持（传输JPEG/GIF/PNG 图片的一个过滤器）（默认为不启用。gd库要用到）
         --with-http_image_filter_module \
         # 启用ngx_http_geoip_module支持（该模块创建基于与MaxMind GeoIP二进制文件相配的客户端IP地址的ngx_http_geoip_module变量）
