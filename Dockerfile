@@ -117,8 +117,9 @@ RUN ls -l /data/*; \
         --with-http_slice_module \
         # 启用ngx_http_stub_status_module支持（获取nginx自上次启动以来的工作状态）
         --with-http_stub_status_module \
+        # 412.9 ../../../../../src/http/modules/perl/ngx_http_perl_module.h:17:10: fatal error: EXTERN.h: No such file or directory
         # 启用ngx_http_perl_module支持（该模块使nginx可以直接使用perl或通过ssi调用perl）
-        --with-http_perl_module \
+        # --with-http_perl_module \
         # 启用POP3/IMAP4/SMTP代理模块支持
         --with-mail \
         # 启用ngx_mail_ssl_module支持
