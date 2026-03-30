@@ -140,7 +140,7 @@ RUN ls -l /data/*; \
       # CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -g
       # CFLAGS =  -pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -Werror -static
       # cat objs/Makefile |grep "Wno-unused-parameter"; sleep 10; \
-      make
+      make -j"$(nproc)"
 
 # RUN mkdir -p /rootfs/bin && \
 #       cp /tmp/nginx-$VERSION/objs/nginx /rootfs/bin/ && \
